@@ -20,10 +20,15 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
-  const brokers = configService.get('BROKERS');
-  const cors_origins = configService.get('BROKERS');
-  const cors_credentials = configService.get('CORS_ALLOW_CREDENTIALS');
-  const app_enable_cookies = configService.get('APP_ENABLE_COOKIES');
+  function envv(key: string) {
+    return configService.get(key);
+  }
+
+  const auth_port = envv('AUTH_PORT');
+  const brokers = envv('BROKERS');
+  const cors_origins = envv('CORS_ORIGINS');
+  const cors_credentials = envv('CORS_ALLOW_CREDENTIALS');
+  const app_enable_cookies = envv('APP_ENABLE_COOKIES');
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,
@@ -32,7 +37,7 @@ async function bootstrap() {
         brokers: list(brokers),
       },
       consumer: {
-        groupId: configService.get('CONSUMER_ID'),
+        groupId: envv('CONSUMER_ID'),
       },
     },
   });
@@ -80,6 +85,6 @@ async function bootstrap() {
 
   await app.startAllMicroservices();
 
-  await app.listen(3000);
+  await app.listen(Number(Number(auth_port) || 3000));
 }
 bootstrap();
