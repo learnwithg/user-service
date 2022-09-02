@@ -1,10 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider        = "prisma-client-js"
   binaryTargets   = ["native", "linux-musl"]
-  previewFeatures = ["interactiveTransactions", "fullTextSearch", "fieldReference"]
+  previewFeatures = ["interactiveTransactions", "fullTextSearch", "fieldReference", "referentialIntegrity"]
 }
 
 datasource db {
@@ -16,11 +13,22 @@ model User {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   username    String
   password    String
+  email       String
   roles       String[]
   permissions String[]
+  isLocked    Boolean  @default(false)
   createdAt   DateTime @default(now())
 
   @@map("users")
+}
+
+model UserProfile {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  firstName  String
+  middleName String?
+  lastName   String
+
+  @@map("userProfiles")
 }
 
 model RolesAndPermissionsConfig {

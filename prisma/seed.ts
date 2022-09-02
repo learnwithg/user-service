@@ -1,9 +1,14 @@
 import { PrismaClient } from '@prisma/client';
+import { rolesAndPermissions } from './data/roles_and_permissions';
 
 const prismaClient = new PrismaClient();
 
 export async function seed() {
-  await prismaClient.$transaction(async (prisma: PrismaClient) => {});
+  await prismaClient.$transaction(async (prisma: PrismaClient) => {
+    await prisma.rolesAndPermissionsConfig.createMany({
+      data: rolesAndPermissions,
+    });
+  });
 
   return 'Done! ';
 }
