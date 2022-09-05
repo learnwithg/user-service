@@ -9,6 +9,7 @@ import * as cookieParser from 'cookie-parser';
 import * as csurf from 'csurf';
 import * as helmet from 'helmet';
 import { AppModule } from './app.module';
+import { CORS_OPTIONS } from './common/config/cors.config';
 
 function list(payload: string) {
   if (!payload) return [];
@@ -27,11 +28,6 @@ async function bootstrap() {
 
   const auth_port = envv('AUTH_PORT');
   const brokers = envv('BROKERS');
-  const cors_origins = envv('CORS_ORIGINS');
-  const allowed_headers = envv('ALLOWED_HEADERS');
-  const allowed_methods = envv('ALLOWED_METHODS');
-  const cors_credentials = envv('CORS_ALLOW_CREDENTIALS');
-  const app_enable_cookies = envv('APP_ENABLE_COOKIES');
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,
@@ -55,19 +51,8 @@ async function bootstrap() {
     }),
   );
 
-  app.enable('trust proxy');
-
-  app.enableCors({
-    origin: list(cors_origins),
-    allowedHeaders: allowed_headers,
-    methods: allowed_methods,
-    credentials: ['1', 'true'].includes(cors_credentials),
-  });
-
-  if (['1', 'true'].includes(app_enable_cookies)) {
-    app.use(cookieParser());
-  }
-
+  app.enableCors(CORS_OPTIONS);
+  app.use(cookieParser());
   app.use(csurf());
   app.use(helmet.contentSecurityPolicy());
   app.use(helmet.crossOriginEmbedderPolicy());
