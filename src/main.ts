@@ -9,7 +9,7 @@ import * as cookieParser from 'cookie-parser';
 import * as csurf from 'csurf';
 import * as helmet from 'helmet';
 import { AppModule } from './app.module';
-import { CORS_OPTIONS } from './common/config/cors.config';
+import { CORS_OPTIONS } from './shared/config/cors.config';
 
 function list(payload: string) {
   if (!payload) return [];
