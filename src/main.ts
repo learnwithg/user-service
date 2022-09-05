@@ -6,6 +6,7 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
+import * as csurf from 'csurf';
 import * as helmet from 'helmet';
 import { AppModule } from './app.module';
 
@@ -27,6 +28,8 @@ async function bootstrap() {
   const auth_port = envv('AUTH_PORT');
   const brokers = envv('BROKERS');
   const cors_origins = envv('CORS_ORIGINS');
+  const allowed_headers = envv('ALLOWED_HEADERS');
+  const allowed_methods = envv('ALLOWED_METHODS');
   const cors_credentials = envv('CORS_ALLOW_CREDENTIALS');
   const app_enable_cookies = envv('APP_ENABLE_COOKIES');
 
@@ -52,9 +55,12 @@ async function bootstrap() {
     }),
   );
 
+  app.enable('trust proxy');
+
   app.enableCors({
     origin: list(cors_origins),
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
+    allowedHeaders: allowed_headers,
+    methods: allowed_methods,
     credentials: ['1', 'true'].includes(cors_credentials),
   });
 
@@ -62,6 +68,7 @@ async function bootstrap() {
     app.use(cookieParser());
   }
 
+  app.use(csurf());
   app.use(helmet.contentSecurityPolicy());
   app.use(helmet.crossOriginEmbedderPolicy());
   app.use(helmet.crossOriginOpenerPolicy());
