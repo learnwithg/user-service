@@ -1,6 +1,6 @@
 {
   "name": "user-service",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "",
   "author": "",
   "private": true,
@@ -69,8 +69,8 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "engines": {
-    "node": ">=16.16.0",
-    "npm": ">=8.18.0"
+    "node": ">=16.17.0",
+    "npm": ">=8.19.0"
   },
   "jest": {
     "moduleFileExtensions": [
